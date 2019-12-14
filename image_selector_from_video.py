@@ -28,16 +28,8 @@ cell_width = cell_height * (initial_img_width / initial_img_height)
 # cell_height = cell_width * (initial_img_height / initial_img_width)
 # window_width = int(cell_width * number_of_columns)
 
-print(cell_width)
-print(cell_height)
-
 resize_x = cell_width / initial_img_width
 resize_y = cell_height / initial_img_height
-
-print(resize_x)
-print(resize_y)
-
-# print(cell_height)
 
 # setting up cell widths and asserting cells fit into the window size
 # cell_width = initial_img_width * resize_x # 150
@@ -61,6 +53,7 @@ animal_list_to_keep = []
 animal_list_to_print = []
 animal = ''
 enable_draw_on_grid = False
+new_image = ''
 
 
 # mouse click for left button
@@ -84,16 +77,16 @@ def click_event(event, x, y, flags, param):
             cell_number = int(x1 + (y1 * number_of_columns))
             # Temporary list for drawing rectangles
             cell_numbers_temporary.append(cell_number)
-            # cell numbers list for each grid gets cleared by spacebar
+            # cell numbers list for each grid gets cleared by space
             cell_numbers_list_for_each_grid.append(cell_number)
             return cell_number
 
         cell = coordinate_to_cell(x1, y1)
 
         # uses the cell number converts to coordinates and draws rectangles
-        global newimage
-        newimage = param[0].copy()
-        image_list.append(newimage)
+        global new_image
+        new_image = param[0].copy()
+        image_list.append(new_image)
 
         def draw_rectangles(cell_number):
             # https://stackoverflow.com/questions/8669189/converting-numbers-within-grid-to-their-corresponding-x-y-coordinates
@@ -140,11 +133,8 @@ def click_event(event, x, y, flags, param):
                     animal = 'window open'
                     animal = easygui.enterbox("What car is it?")
 
-                # if wanting only integers
-                # animal = easygui.integerbox('What animal is it?')
-
                 if animal != 'window open':
-                    if animal == None:
+                    if animal is None:
                         animal = ''
                     animal_list_temporary.append(animal)
                     animal = ''
@@ -175,7 +165,7 @@ def click_event(event, x, y, flags, param):
 
 
 # Check if camera opened successfully
-if (cap.isOpened() == False):
+if not cap.isOpened():
     print("Error opening video stream or file")
 
 index = 0
@@ -193,22 +183,21 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
     while i < number_of_cells:
         global enable_draw_on_grid
         enable_draw_on_grid = False
-        while (cap.isOpened()):
+        while cap.isOpened():
             # Capture frame-by-frame
             ret, frame = cap.read()
-            if ret == True:
+            if ret:
 
                 #  resize image
                 s_image = cv2.resize(frame, (0, 0), None, resize_x, resize_y)
 
                 # put small images onto large image
                 l_img[y_offset:y_offset + s_image.shape[0], x_offset:x_offset + s_image.shape[1]] = s_image
-                # l_img2 = l_img.copy()
+
                 # show each small images drawn
                 cv2.imshow('win', l_img)
                 cv2.waitKey(1)
 
-                # prev_image = l_img
                 # i for count of images, index keeps track of where you are in frames
                 i += 1
                 index += 1
@@ -257,7 +246,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                             create_permanent_animal_list()
 
-                            # transforms each cell number in the temporary grid into a frame and appends to frame numbers list
+                            # transforms cell number in temporary grid into frame and appends to frame numbers list
                             def each_grid_cells_into_frames_list():
                                 for cell in cell_numbers_list_for_each_grid:
                                     frame_number = int(param[1]) + int(cell)
@@ -267,11 +256,11 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                             print(frame_numbers_list)
 
-                            def make_list_of_frames_to_keep(
-                                    animal_count=0):  # calculates frames spans backwards and forwards
-                                frame_numbers_list_sliced = zip(frame_numbers_list[0::2], frame_numbers_list[
-                                                                                          1::2])  # putting into a list of two's for calculating frame spans
-                                # clear lists on each spacebar; because text file generated on spacebar
+                            # calculates frames spans backwards and forwards
+                            def make_list_of_frames_to_keep( animal_count=0):
+                                # putting into a list of two's for calculating frame spans
+                                frame_numbers_list_sliced = zip(frame_numbers_list[0::2], frame_numbers_list[1::2])
+                                # clear lists when space pressed
                                 list_of_frames_to_keep.clear()
                                 animal_list_to_print.clear()
 
@@ -310,5 +299,5 @@ image_grid(index)
 # When everything done, release the video capture object
 cap.release()
 
-# Closes all the frames
+# Closes all the windows
 cv2.destroyAllWindows()
