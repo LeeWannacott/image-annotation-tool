@@ -4,7 +4,7 @@ This program has been designed for use in a machine learning - data science cont
 
 The program designed to read in images from a video and resizes the original images down into a grid, allowing 
 the user to select a span of images and tag the images with text. A text file containing the frame numbers and tagging 
-is produced on each press of the space bar; New images are also fed into the grid on Space bar.
+is produced on each press of the space bar; The next lot of images are also fed into the grid on Space bar.
 
 Keyboard and mouse shortcuts:
 ```
