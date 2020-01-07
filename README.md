@@ -9,3 +9,5 @@ Left mouse click = Select span of images.
 Right mouse click = Undo image span selection.
 Space bar = Go to next set of images and store tagged images + frame number in text file.
 
+```Students details sheet needs to be added to front page of students xlsx workbooks. Downloadable from Github```
+![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example%of%use.png)
