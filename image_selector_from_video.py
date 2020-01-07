@@ -133,10 +133,10 @@ def click_event(event, x, y, flags, param):
                           (0, 150, 0), 2)
             cv2.imshow('win', param[0])
 
-        # draw rectangles between two grid images
+        # Draw rectangles between two grid images
         def draw_rectangles_span():
 
-            # draws rectangle in the first cell
+            # Draws rectangle in the first cell
             if len(cell_numbers_temporary) == 1:
                 draw_rectangles(cell)
 
@@ -145,17 +145,17 @@ def click_event(event, x, y, flags, param):
                     range(int(cell_numbers_temporary[-1]), int(cell_numbers_temporary[-2] + 1)))  # backwards
                 between_forwards = list(
                     range(int(cell_numbers_temporary[-2]), int(cell_numbers_temporary[-1] + 1)))  # forwards
-                # draw rectangles backwards
+                # Draw rectangles backwards
                 if cell_numbers_temporary[-1] < cell_numbers_temporary[-2]:
                     for next_cell1 in between_backwards:
                         draw_rectangles(next_cell1)
 
-                # draw rectangles forwards
+                # Draw rectangles forwards
                 if cell_numbers_temporary[-1] > cell_numbers_temporary[-2]:
                     for next_cell2 in between_forwards:
                         draw_rectangles(next_cell2)
 
-                # clear temporary list so another two squares can be selected
+                # Clear temporary list so another two squares can be selected
                 cell_numbers_temporary.clear()
 
                 global animal
@@ -174,7 +174,7 @@ def click_event(event, x, y, flags, param):
         draw_rectangles_span()
 
     elif event == cv2.EVENT_RBUTTONDOWN and animal == '' and enable_draw_on_grid == True:
-        # allows to go back to previously drawn images
+        # Allows going back to previously drawn images
         if len(image_list) == 1:
             param[0] = image_list[-1]
             cv2.imshow('win', image_list[-1])
@@ -211,7 +211,7 @@ cv2.resizeWindow('win', window_width, window_height)
 def image_grid(index, x_offset=0, y_offset=0, i=0):
     cap.set(1, index)
     recalculate_window_stuff()
-    # resetting image to black each time
+    # Resetting large image to black each time
     l_img = np.zeros((window_height, window_width, 3), np.uint8)
     cv2.imshow('win', l_img)
     cv2.waitKey(1)
@@ -225,15 +225,15 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
             ret, frame = cap.read()
             if ret:
 
-                #  resize image
+                #  Resize image
                 s_image = cv2.resize(frame, (0, 0), None, resize_x, resize_y)
 
-                # put small images onto large image
+                # Put small images onto large image
                 x_offset = (i % number_of_columns) * int(cell_width)
                 y_offset = (i // number_of_columns) * int(cell_height)
                 l_img[y_offset:y_offset + s_image.shape[0], x_offset:x_offset + s_image.shape[1]] = s_image
 
-                # show each small images drawn
+                # Show each small images drawn
                 cv2.imshow('win', l_img)
                 cv2.waitKey(1)
 
@@ -242,7 +242,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                 index += 1
                 if i == number_of_cells or index == frames_in_video:
                     enable_draw_on_grid = True
-                    # parameters passed mouse click function
+                    # Parameters passed mouse click function
                     param = [l_img, index_for_frame_list]
                     while True:
 
@@ -256,7 +256,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                         elif c == 32:  # Space bar to go to next set of images
                             print('Space bar pressed go to next images')
 
-                            # getting rid of an uneven number of cells in lists
+                            # Getting rid of an uneven number of cells in lists
                             if len(cell_numbers_temporary) % 2 == 0:
                                 pass
                             else:
@@ -266,18 +266,18 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                             else:
                                 cell_numbers_list_for_each_grid.pop()
 
-                            # clears lists for the case of single selected rectangle
+                            # Clears lists for the case of single selected rectangle
                             cell_numbers_temporary.clear()
                             image_list.clear()
 
-                            # creates a animal list from the temporary animal lists of each grid of images.
+                            # Creates a animal list from the temporary animal lists of each grid of images.
                             def create_permanent_animal_list():
                                 for animals in animal_list_temporary:
                                     animal_list_to_keep.append(animals)
 
                             create_permanent_animal_list()
 
-                            # transforms cell number in temporary grid into frame and appends to frame numbers list
+                            # Transforms cell number in temporary grid into frame and appends to frame numbers list
                             def each_grid_cells_into_frames_list():
                                 for cell in cell_numbers_list_for_each_grid:
                                     frame_number = int(param[1]) + int(cell)
@@ -287,7 +287,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                             print(frame_numbers_list)
 
-                            # calculates frames spans backwards and forwards
+                            # Calculates frames spans backwards and forwards
                             def make_list_of_frames_to_keep(animal_count=0):
                                 # putting into a list of two's for calculating frame spans
                                 frame_numbers_list_sliced = zip(frame_numbers_list[0::2], frame_numbers_list[1::2])
