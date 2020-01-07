@@ -8,13 +8,13 @@ is produced on each press of the space bar; New images are also fed into the gri
 
 User inputs:
 
-Esc = Exit the program.
+```Esc = Exit the program.```
 
-Left mouse click = Select span of images.
+```Left mouse click = Select span of images.```
 
-Right mouse click = Undo image span selection.
+```Right mouse click = Undo image span selection.```
 
-Space bar = Go to next set of images and store tagged images + frame number in text file.
+```Space bar = Go to next set of images and store tagged images + frame number in text file.```
 
 ```Example of program in use with images selected and entering a tag for image span```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
