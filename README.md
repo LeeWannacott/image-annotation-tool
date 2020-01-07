@@ -6,7 +6,7 @@ The program designed to read in images from a video and resizes the original ima
 the user to select a span of images and tag the images with text. A text file containing the frame numbers and tagging 
 is produced on each press of the space bar; New images are also fed into the grid on Space bar.
 
-User inputs:
+Keyboard and mouse shortcuts:
 ```
 Esc = Exit the program.
 Left mouse click = Select span of images.
