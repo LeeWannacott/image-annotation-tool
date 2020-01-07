@@ -9,5 +9,3 @@ Left mouse click = Select span of images.
 Right mouse click = Undo image span selection.
 Space bar = Go to next set of images and store tagged images + frame number in text file.
 
-```Instructions shown on User Interface. Refer to Readme pdf for indepth instructions.```
-![Screenshot](https://github.com/LeeWannacott/MYS-Mark-Your-Spreadsheet/blob/master/Mark-Your-Spreadsheet%20instructions.png)
