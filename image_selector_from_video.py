@@ -38,7 +38,7 @@ initial_img_height = 3000
 
 # Calculating how many frames are in the video useful for last image grid.
 frames_in_video = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-print(frames_in_video)
+print('Frames in video: ' + str(frames_in_video))
 
 def recalculate_window_stuff():
     global cell_height
@@ -50,11 +50,11 @@ def recalculate_window_stuff():
     global resize_y
     global window_height
     global window_width
-    (_, _, temp_window_width, temp_window_height) = cv2.getWindowImageRect('win')
+    (_, _, temp_window_width, temp_window_height) = cv2.getWindowImageRect('image_selector_from_video')
     if not (temp_window_width == -1 or temp_window_height == -1):
         window_width = temp_window_width
         window_height = temp_window_height
-    print(f"resizing: {window_width}x{window_height}")
+    print(f"Window size: {window_width}x{window_height}")
 
     cell_height = window_height // number_of_rows
     cell_width = int(cell_height * (initial_img_width / initial_img_height))
@@ -70,8 +70,8 @@ def recalculate_window_stuff():
     resize_x = cell_width / initial_img_width
     resize_y = cell_height / initial_img_height
     number_of_cells = number_of_rows * number_of_columns
-    print('Cell width ' + str(cell_width), 'Cell Height ' + str(cell_height), 'Number of rows ' + str(number_of_rows),
-          'Number of Columns ' + str(number_of_columns))
+    print('Cell width: ' + str(cell_width), 'Cell Height: ' + str(cell_height), 'Number of rows: ' + str(number_of_rows),
+          'Number of Columns: ' + str(number_of_columns))
 
 
 # Global lists
@@ -131,7 +131,7 @@ def click_event(event, x, y, flags, param):
             draw_to_y = cell_y_position + cell_height
             cv2.rectangle(param[0], (int(cell_x_position), int(cell_y_position)), (int(draw_to_x), int(draw_to_y)),
                           (0, 150, 0), 2)
-            cv2.imshow('win', param[0])
+            cv2.imshow('image_selector_from_video', param[0])
 
         # Draw rectangles between two grid images
         def draw_rectangles_span():
@@ -177,14 +177,14 @@ def click_event(event, x, y, flags, param):
         # Allows going back to previously drawn images
         if len(image_list) == 1:
             param[0] = image_list[-1]
-            cv2.imshow('win', image_list[-1])
+            cv2.imshow('image_selector_from_video', image_list[-1])
             cv2.waitKey(1)
             image_list.pop()
             cell_numbers_list_for_each_grid.pop()
 
         elif len(image_list) > 1:
             param[0] = image_list[-2]
-            cv2.imshow('win', image_list[-2])
+            cv2.imshow('image_selector_from_video', image_list[-2])
             cv2.waitKey(1)
 
             image_list.pop()
@@ -203,8 +203,8 @@ if not cap.isOpened():
 
 index = 0
 
-cv2.namedWindow('win', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('win', window_width, window_height)
+cv2.namedWindow('image_selector_from_video', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('image_selector_from_video', window_width, window_height)
 
 
 # Read until video is completed
@@ -213,7 +213,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
     recalculate_window_stuff()
     # Resetting large image to black each time
     l_img = np.zeros((window_height, window_width, 3), np.uint8)
-    cv2.imshow('win', l_img)
+    cv2.imshow('image_selector_from_video', l_img)
     cv2.waitKey(1)
     index_for_frame_list = index
 
@@ -234,7 +234,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                 l_img[y_offset:y_offset + s_image.shape[0], x_offset:x_offset + s_image.shape[1]] = s_image
 
                 # Show each small images drawn
-                cv2.imshow('win', l_img)
+                cv2.imshow('image_selector_from_video', l_img)
                 cv2.waitKey(1)
 
                 # i for count of images, index keeps track of where you are in frames
@@ -246,7 +246,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                     param = [l_img, index_for_frame_list]
                     while True:
 
-                        cv2.setMouseCallback('win', click_event, param)
+                        cv2.setMouseCallback('image_selector_from_video', click_event, param)
                         c = cv2.waitKey(1)
 
                         if c == 27:  # esc to quite
