@@ -7,14 +7,12 @@ the user to select a span of images and tag the images with text. A text file co
 is produced on each press of the space bar; New images are also fed into the grid on Space bar.
 
 User inputs:
-
-```Esc = Exit the program.```
-
-```Left mouse click = Select span of images.```
-
-```Right mouse click = Undo image span selection.```
-
-```Space bar = Go to next set of images and store tagged images + frame number in text file.```
+```
+Esc = Exit the program
+Left mouse click = Select span of images
+Right mouse click = Undo image span selection
+Space bar = Go to next set of images and store tagged images + frame number in text file.
+```
 
 ```Example of program in use with images selected and entering a tag for image span```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
