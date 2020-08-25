@@ -289,11 +289,6 @@ def click_event(event, x, y, flags, param):
             print(cell_start_relative_position_x_resized, cell_start_relative_position_y_resized,
                   cell_end_relative_position_x_resized, cell_end_relative_position_y_resized)
 
-
-
-
-
-
         # Checks if its still within the same cell and if so draws bounding box
         if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing:
             draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
