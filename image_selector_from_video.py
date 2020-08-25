@@ -40,6 +40,7 @@ initial_img_height = 1080
 frames_in_video = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 print('Frames in video: ' + str(frames_in_video))
 
+
 def recalculate_window_stuff():
     global cell_height
     global cell_width
@@ -59,18 +60,18 @@ def recalculate_window_stuff():
     cell_height = window_height // number_of_rows
     cell_width = int(cell_height * (initial_img_width / initial_img_height))
 
-
     # cell_aspect_ratio and image_aspect_ratio used for assert statement; for debugging.
     cell_aspect_ratio = cell_width / cell_height
     image_aspect_ratio = initial_img_width / initial_img_height
-    assert abs(cell_aspect_ratio - image_aspect_ratio) < 0.01, f"cell_aspect_ratio={cell_aspect_ratio} image_aspect_ratio={image_aspect_ratio}"
-
+    assert abs(
+        cell_aspect_ratio - image_aspect_ratio) < 0.01, f"cell_aspect_ratio={cell_aspect_ratio} image_aspect_ratio={image_aspect_ratio}"
 
     number_of_columns = window_width // cell_width
     resize_x = cell_width / initial_img_width
     resize_y = cell_height / initial_img_height
     number_of_cells = number_of_rows * number_of_columns
-    print('Cell width: ' + str(cell_width), 'Cell Height: ' + str(cell_height), 'Number of rows: ' + str(number_of_rows),
+    print('Cell width: ' + str(cell_width), 'Cell Height: ' + str(cell_height),
+          'Number of rows: ' + str(number_of_rows),
           'Number of Columns: ' + str(number_of_columns))
 
 
@@ -90,7 +91,9 @@ enable_draw_on_grid = False
 new_image = ''
 bounding_box_start_coordinates_x_y = ()
 last_mouse_button_clicked = []
-drawn_one_cell_or_two = []
+drawn_one_cell_or_span = []
+
+
 
 # Mouse click for left button
 def click_event(event, x, y, flags, param):
@@ -99,18 +102,16 @@ def click_event(event, x, y, flags, param):
     global bounding_box_start_coordinates_x_y
     global new_image
     global image_list_for_bounding_boxes
-    global drawn_one_cell_or_two
+    global drawn_one_cell_or_span
+
 
     if event == cv2.EVENT_LBUTTONDOWN and animal == '' and enable_draw_on_grid == True:
         last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
-
         col_number = x / cell_width
         x1 = math.trunc(col_number)
         row_number = y / cell_height
         y1 = math.trunc(row_number)
-
-
 
         # Get cell number based on coordinates x1, y1
         def coordinate_to_cell(x, y):
@@ -147,8 +148,7 @@ def click_event(event, x, y, flags, param):
             # Draws rectangle in the first cell
             if len(cell_numbers_temporary) == 1:
                 draw_rectangles(cell)
-                drawn_one_cell_or_two.append('one')
-
+                drawn_one_cell_or_span.append('one')
 
             if len(cell_numbers_temporary) >= 2:
                 between_backwards = list(
@@ -168,7 +168,7 @@ def click_event(event, x, y, flags, param):
                 # Clear temporary list so another two squares can be selected
                 cell_numbers_temporary.clear()
 
-                drawn_one_cell_or_two.append('two')
+                drawn_one_cell_or_span.append('two')
                 global animal
                 global window_open
                 if animal == '':
@@ -184,23 +184,23 @@ def click_event(event, x, y, flags, param):
 
         draw_rectangles_span()
 
-    elif event == cv2.EVENT_RBUTTONUP and animal == '' and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'left':
+    elif event == cv2.EVENT_RBUTTONUP and animal == '' and enable_draw_on_grid == True and len(
+            last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'left':
 
         # Allows going back to previously drawn images
 
-        if len(image_list) >= 1 and drawn_one_cell_or_two[-1] == 'one':
+        if len(image_list) >= 1 and drawn_one_cell_or_span[-1] == 'one':
             param[0] = image_list[-1]
             cv2.imshow('image_selector_from_video', image_list[-1])
             cv2.waitKey(1)
             image_list.pop()
             cell_numbers_list_for_each_grid.pop()
             last_mouse_button_clicked.pop()
-            drawn_one_cell_or_two.pop()
-            print('1')
+            drawn_one_cell_or_span.pop()
 
             cell_numbers_temporary.clear()
 
-        elif len(image_list) >= 2 and drawn_one_cell_or_two[-1] == 'two':
+        elif len(image_list) >= 2 and drawn_one_cell_or_span[-1] == 'two':
             param[0] = image_list[-2]
             cv2.imshow('image_selector_from_video', image_list[-2])
             cv2.waitKey(1)
@@ -211,43 +211,53 @@ def click_event(event, x, y, flags, param):
             last_mouse_button_clicked.pop()
             last_mouse_button_clicked.pop()
 
-            drawn_one_cell_or_two.pop()
-            drawn_one_cell_or_two.pop()
+            drawn_one_cell_or_span.pop()
+            drawn_one_cell_or_span.pop()
 
             cell_numbers_list_for_each_grid.pop()
             cell_numbers_list_for_each_grid.pop()
 
-            print('2')
             if len(animal_list_temporary) > 0:
                 animal_list_temporary.pop()
 
-    elif event == cv2.EVENT_RBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'middle':
+    elif event == cv2.EVENT_RBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and \
+            last_mouse_button_clicked[-1] == 'middle':
         if len(image_list) >= 1 and last_mouse_button_clicked[-1] == 'middle':
             param[0] = image_list[-1]
             cv2.imshow('image_selector_from_video', image_list[-1])
             cv2.waitKey(1)
             image_list.pop()
             last_mouse_button_clicked.pop()
-            print('3')
 
 
 
-    # Allow boundary boxes to be places over images.
+
+    # Allow bounding boxes to be places over images.
     elif event == cv2.EVENT_MBUTTONDOWN:
 
         def get_bounding_box_start_coordinates(x, y):
             x_start_boundary = x
             y_start_boundary = y
-            return (x_start_boundary ,y_start_boundary)
+            col_number = x / cell_width
+            x1 = math.trunc(col_number)
+            row_number = y / cell_height
+            y1 = math.trunc(row_number)
+            cell_number_on_start_of_drawing = int(x1 + (y1 * number_of_columns))
+
+            return (x_start_boundary, y_start_boundary, cell_number_on_start_of_drawing)
 
         bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
 
     elif event == cv2.EVENT_MBUTTONUP:
-
-
+        # Get cell number at start of
+        col_number = x / cell_width
+        x1 = math.trunc(col_number)
+        row_number = y / cell_height
+        y1 = math.trunc(row_number)
+        cell_number_on_end_of_drawing = int(x1 + (y1 * number_of_columns))
 
         def draw_boundary_box(x, y, start_boundary_x_and_y):
-            # Making copy for undrawing bounding box
+            # Making copy for un-drawing bounding box
             new_image_boundary = param[0].copy()
             image_list.append(new_image_boundary)
 
@@ -258,11 +268,9 @@ def click_event(event, x, y, flags, param):
             last_mouse_button_clicked.append('middle')
 
 
-        draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
-
-
-
-
+        # Allows drawing of boundary boxes if its still within the sane cell
+        if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing:
+            draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
 
 
 # Check if camera opened successfully.
@@ -318,7 +326,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                         cv2.setMouseCallback('image_selector_from_video', click_event, param)
                         c = cv2.waitKey(1)
 
-                        if c == 27:  # esc to quite
+                        if c == 27:  # Esc to quit
                             print('Esc pressed to Exit')
                             sys.exit()
 
