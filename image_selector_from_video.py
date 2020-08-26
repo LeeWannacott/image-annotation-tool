@@ -92,6 +92,9 @@ new_image = ''
 bounding_box_start_coordinates_x_y = ()
 last_mouse_button_clicked = []
 drawn_one_cell_or_span = []
+list_of_bounding_box_coordinates = []
+temporary_list_of_cells_that_have_bounding_boxes = []
+dictionary_of_cell_number_and_bounding_boxes = {}
 
 # Mouse click for left button
 def click_event(event, x, y, flags, param):
@@ -101,7 +104,9 @@ def click_event(event, x, y, flags, param):
     global new_image
     global image_list_for_bounding_boxes
     global drawn_one_cell_or_span
-
+    global list_of_bounding_box_coordinates
+    global temporary_list_of_cells_that_have_bounding_boxes
+    global dictionary_of_cell_number_and_bounding_boxes
     if event == cv2.EVENT_LBUTTONDOWN and animal == '' and enable_draw_on_grid == True:
         last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
@@ -115,6 +120,7 @@ def click_event(event, x, y, flags, param):
             # https://stackoverflow.com/questions/9816024/coordinates-to-grid-box-number
             cell_number = int(x + (y * number_of_columns))
             # Temporary list for drawing rectangles
+
             cell_numbers_temporary.append(cell_number)
             # cell numbers list for each grid gets cleared by space
             cell_numbers_list_for_each_grid.append(cell_number)
@@ -123,10 +129,11 @@ def click_event(event, x, y, flags, param):
         # For use in drawing rectangle function.
         cell = coordinate_to_cell(x1, y1)
 
-        # Uses the cell number converts to coordinates and draws rectangles
+        # Making copy of image for undo function.
         new_image = param[0].copy()
         image_list.append(new_image)
 
+        # Uses the cell number converts to coordinates and draws rectangles
         def draw_rectangles(cell_number):
             # https://stackoverflow.com/questions/8669189/converting-numbers-within-grid-to-their-corresponding-x-y-coordinates
             x2 = cell_number % number_of_columns
@@ -168,11 +175,11 @@ def click_event(event, x, y, flags, param):
                 # Clear temporary list so another two squares can be selected
                 cell_numbers_temporary.clear()
 
-                drawn_one_cell_or_span.append('two')
+                drawn_one_cell_or_span.append('span')
                 global animal
                 global window_open
                 if animal == '':
-                    # window_open = True
+                    # Window_open = True
                     animal = 'window open'
                     animal = easygui.enterbox("What is tagged in the images?")
 
@@ -200,11 +207,12 @@ def click_event(event, x, y, flags, param):
 
             cell_numbers_temporary.clear()
 
-        elif len(image_list) >= 2 and drawn_one_cell_or_span[-1] == 'two':
+        elif len(image_list) >= 2 and drawn_one_cell_or_span[-1] == 'span':
             param[0] = image_list[-2]
             cv2.imshow('image_selector_from_video', image_list[-2])
             cv2.waitKey(1)
 
+            # Popping lists to undo selection span of images
             image_list.pop()
             image_list.pop()
 
@@ -220,15 +228,36 @@ def click_event(event, x, y, flags, param):
             if len(animal_list_temporary) > 0:
                 animal_list_temporary.pop()
 
-    elif event == cv2.EVENT_RBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and \
-            last_mouse_button_clicked[-1] == 'middle':
+    elif event == cv2.EVENT_RBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'middle':
         if len(image_list) >= 1 and last_mouse_button_clicked[-1] == 'middle':
             param[0] = image_list[-1]
             cv2.imshow('image_selector_from_video', image_list[-1])
             cv2.waitKey(1)
+
             image_list.pop()
             last_mouse_button_clicked.pop()
+            # Allows for the potential to have multiple boundary boxes in same cell
+            if len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) > 4:
+                # print(len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]))
 
+                # Removing four coordinates if more than one boundary box in cell.
+                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
+                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
+                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
+                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
+                print(dictionary_of_cell_number_and_bounding_boxes)
+                # print(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1])
+                # print(len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]))
+
+            # Removes boundary boxes if in a single cell
+            elif len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) == 4:
+                print(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1])
+                dictionary_of_cell_number_and_bounding_boxes.pop(temporary_list_of_cells_that_have_bounding_boxes[-1])
+                print(dictionary_of_cell_number_and_bounding_boxes)
+
+
+            temporary_list_of_cells_that_have_bounding_boxes.pop()
+            # print(dictionary_of_cell_number_and_bounding_boxes)
     # Allow bounding boxes to be places over images
     elif event == cv2.EVENT_MBUTTONDOWN:
 
@@ -286,9 +315,19 @@ def click_event(event, x, y, flags, param):
             cell_end_relative_position_x_resized = round(cell_end_relative_position_x / resize_x)
             cell_end_relative_position_y_resized = round(cell_end_relative_position_y / resize_y)
 
-            print(cell_start_relative_position_x_resized, cell_start_relative_position_y_resized,
-                  cell_end_relative_position_x_resized, cell_end_relative_position_y_resized)
+            list_bounding_box_coordinates = [cell_start_relative_position_x_resized, cell_start_relative_position_y_resized,
+                                                    cell_end_relative_position_x_resized, cell_end_relative_position_y_resized]
 
+            temporary_list_of_cells_that_have_bounding_boxes.append(bounding_box_start_coordinates_x_y[2])
+
+
+            # Checks if there is already a key from there already being a bounding box in the cell
+            if bounding_box_start_coordinates_x_y[2] in dictionary_of_cell_number_and_bounding_boxes:
+                dictionary_of_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]].extend(list_bounding_box_coordinates)
+
+            else:
+                dictionary_of_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]] = list_bounding_box_coordinates
+                print(dictionary_of_cell_number_and_bounding_boxes)
         # Checks if its still within the same cell and if so draws bounding box
         if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing:
             draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
