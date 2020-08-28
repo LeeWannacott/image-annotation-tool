@@ -1,7 +1,7 @@
 # image-selector-opencv-python
 ```
 This program is designed to speed up preprocessing of image data.
-Helping the user to get to the data science modelling step faster.
+Allowing the user to get to the data science modelling step faster.
 It allows image selection and putting bounding boxes on a span of images.
 
 The program reads frames/images from a video resizes the original images down into a grid.
