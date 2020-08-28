@@ -95,6 +95,7 @@ drawn_one_cell_or_span = []
 list_of_bounding_box_coordinates = []
 temporary_list_of_cells_that_have_bounding_boxes = []
 temp_dict_cell_number_and_bounding_boxes = {}
+perm_dict_cell_number_and_bounding_boxes = {}
 
 # Mouse click for left button
 def click_event(event, x, y, flags, param):
@@ -107,6 +108,8 @@ def click_event(event, x, y, flags, param):
     global list_of_bounding_box_coordinates
     global temporary_list_of_cells_that_have_bounding_boxes
     global temp_dict_cell_number_and_bounding_boxes
+    global perm_dict_cell_number_and_bounding_boxes
+
     if event == cv2.EVENT_LBUTTONDOWN and animal == '' and enable_draw_on_grid == True:
         last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
@@ -238,20 +241,15 @@ def click_event(event, x, y, flags, param):
             last_mouse_button_clicked.pop()
             # Allows for the potential to have multiple boundary boxes in same cell
             if len(temp_dict_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) > 4:
-                # print(len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]))
 
                 # Removing four coordinates if more than one boundary box in cell.
                 for i in range(4):
                     del temp_dict_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
 
-                print(temp_dict_cell_number_and_bounding_boxes)
-                # print(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1])
-                # print(len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]))
-
             # Removes boundary boxes if in a single cell
             elif len(temp_dict_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) == 4:
                 temp_dict_cell_number_and_bounding_boxes.pop(temporary_list_of_cells_that_have_bounding_boxes[-1])
-                print(temp_dict_cell_number_and_bounding_boxes)
+
 
             # Removes cell number from temporary list
             temporary_list_of_cells_that_have_bounding_boxes.pop()
@@ -269,6 +267,7 @@ def click_event(event, x, y, flags, param):
             y1 = math.trunc(row_number)
             cell_number_on_start_of_drawing = int(x1 + (y1 * number_of_columns))
 
+
             return x_start_boundary, y_start_boundary, cell_number_on_start_of_drawing
 
         bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
@@ -285,9 +284,6 @@ def click_event(event, x, y, flags, param):
         # Minus x,y positions to get cells relative position
         cell_x_position = cell_x * cell_width
         cell_y_position = cell_y * cell_height
-
-        # print(cell_x_position, cell_y_position)
-        # print(bounding_box_start_coordinates_x_y[0],bounding_box_start_coordinates_x_y[1])
 
         def draw_boundary_box(x, y, start_boundary_x_and_y):
             # Making copy for un-drawing bounding box
@@ -315,10 +311,12 @@ def click_event(event, x, y, flags, param):
             cell_end_relative_position_x_resized = round(cell_end_relative_position_x / resize_x)
             cell_end_relative_position_y_resized = round(cell_end_relative_position_y / resize_y)
 
+
             list_bounding_box_coordinates = [cell_start_relative_position_x_resized, cell_start_relative_position_y_resized,
                                                     cell_end_relative_position_x_resized, cell_end_relative_position_y_resized]
 
             temporary_list_of_cells_that_have_bounding_boxes.append(bounding_box_start_coordinates_x_y[2])
+
 
             # Checks if there is already a key from there already being a bounding box in the cell
             if bounding_box_start_coordinates_x_y[2] in temp_dict_cell_number_and_bounding_boxes:
@@ -328,9 +326,9 @@ def click_event(event, x, y, flags, param):
                 temp_dict_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]] = list_bounding_box_coordinates
 
         # Checks if its still within the same cell and if so draws bounding box
-        if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing:
+        if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing and len(cell_numbers_list_for_each_grid) > 0:
             # Check if drawing boundary boxes in span of images that has been selected.
-            if bounding_box_start_coordinates_x_y[2] in range(cell_numbers_list_for_each_grid[-2],cell_numbers_list_for_each_grid[-1]+1):
+            if bounding_box_start_coordinates_x_y[2] in range(cell_numbers_list_for_each_grid[-2], cell_numbers_list_for_each_grid[-1]+1):
                 draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
 
 
@@ -387,11 +385,11 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                         cv2.setMouseCallback('image_selector_from_video', click_event, param)
                         c = cv2.waitKey(1)
 
-                        if c == 27:  # Esc to quit
+                        if c == 27:  # Escape
                             print('Esc pressed to Exit')
                             sys.exit()
 
-                        elif c == 32:  # Space bar to go to next set of images
+                        elif c == 32:  # Space
                             print('Space bar pressed go to next images')
 
                             # Getting rid of an uneven number of cells in lists
@@ -423,7 +421,7 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                             each_grid_cells_into_frames_list()
 
-                            print(frame_numbers_list)
+
 
                             # Calculates frames spans backwards and forwards
                             def make_list_of_frames_to_keep(animal_count=0):
@@ -436,39 +434,54 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                                 for numbers in frame_numbers_list_sliced:
                                     # Forward frame spans
                                     if numbers[0] < numbers[1]:
-                                        for num1 in range(numbers[0], numbers[1] + 1):
-                                            list_of_frames_to_keep.append(num1)
+                                        for frames1 in range(numbers[0], numbers[1] + 1):
+                                            list_of_frames_to_keep.append(frames1)
                                             animal_list_to_print.append(animal_list_to_keep[animal_count])
                                         animal_count += 1
 
                                     # Backward frame spans
                                     elif numbers[0] > numbers[1]:
-                                        for num2 in range(numbers[1], numbers[0] + 1):
-                                            list_of_frames_to_keep.append(num2)
+                                        for frames2 in range(numbers[1], numbers[0] + 1):
+                                            list_of_frames_to_keep.append(frames2)
                                             animal_list_to_print.append(animal_list_to_keep[animal_count])
                                         animal_count += 1
 
                             make_list_of_frames_to_keep()
 
+                            def bounding_box_cell_keys_to_frames():
+                                # Changing the key of dict: cell numbers into frame numbers.
+                                temp_dict_to_append = {k + int(param[1]): v for (k, v) in temp_dict_cell_number_and_bounding_boxes.items()}
+                                perm_dict_cell_number_and_bounding_boxes.update(temp_dict_to_append)
+                            bounding_box_cell_keys_to_frames()
+
+                            # Clear temp dict of bounding boxes ready for next lot of frames to have bounding boxes.
+                            temp_dict_cell_number_and_bounding_boxes.clear()
+
                             # Clearing temporary lists, so ready for the next lot of images.
                             cell_numbers_list_for_each_grid.clear()
                             animal_list_temporary.clear()
 
-                            # Creating text file with frame numbers and what user tags images as.
-                            file = open('List_of_images.txt', 'w')
-                            for i, frame in enumerate(list_of_frames_to_keep):
-                                file.write(str(frame) + str(' ' + animal_list_to_print[i]) + '\n')
-                            file.close()
+                            def create_text_file():
+                                # Creating text file with frame numbers and what user tags images as.
+                                file = open('List_of_images.txt', 'w')
+                                for i, frame in enumerate(list_of_frames_to_keep):
+                                    for key,v in perm_dict_cell_number_and_bounding_boxes.items():
+                                        if key == frame:
+                                            file.write(f'{frame} {animal_list_to_print[i]} {v} \n')
+                                        else:
+                                            file.write(f'{frame} {animal_list_to_print[i]} \n')
+                                file.close()
 
+                            # Output text file on each press of Space.
+                            create_text_file()
+
+                            # Continue calling function if hasn't hit end of video
                             if frames_in_video != index:
                                 return image_grid(index)
 
                             # If Space bar pressed and end of the video exit out of loop and save tagging.
                             elif frames_in_video == index:
-                                file = open('List_of_images.txt', 'w')
-                                for i, frame in enumerate(list_of_frames_to_keep):
-                                    file.write(str(frame) + str(' ' + animal_list_to_print[i]) + '\n')
-                                file.close()
+                                create_text_file()
                                 return
 
 
