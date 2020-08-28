@@ -253,9 +253,9 @@ def click_event(event, x, y, flags, param):
                 temp_dict_cell_number_and_bounding_boxes.pop(temporary_list_of_cells_that_have_bounding_boxes[-1])
                 print(temp_dict_cell_number_and_bounding_boxes)
 
-
+            # Removes cell number from temporary list
             temporary_list_of_cells_that_have_bounding_boxes.pop()
-            # print(dictionary_of_cell_number_and_bounding_boxes)
+
     # Allow bounding boxes to be places over images
     elif event == cv2.EVENT_MBUTTONDOWN and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
 
@@ -272,6 +272,8 @@ def click_event(event, x, y, flags, param):
             return x_start_boundary, y_start_boundary, cell_number_on_start_of_drawing
 
         bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
+
+
 
     elif event == cv2.EVENT_MBUTTONUP and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
         # Get cell number at end of bounding box
@@ -318,17 +320,18 @@ def click_event(event, x, y, flags, param):
 
             temporary_list_of_cells_that_have_bounding_boxes.append(bounding_box_start_coordinates_x_y[2])
 
-
             # Checks if there is already a key from there already being a bounding box in the cell
             if bounding_box_start_coordinates_x_y[2] in temp_dict_cell_number_and_bounding_boxes:
                 temp_dict_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]].extend(list_bounding_box_coordinates)
 
             else:
                 temp_dict_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]] = list_bounding_box_coordinates
-                print(temp_dict_cell_number_and_bounding_boxes)
+
         # Checks if its still within the same cell and if so draws bounding box
         if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing:
-            draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
+            # Check if drawing boundary boxes in span of images that has been selected.
+            if bounding_box_start_coordinates_x_y[2] in range(cell_numbers_list_for_each_grid[-2],cell_numbers_list_for_each_grid[-1]+1):
+                draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
 
 
 # Check if camera opened successfully.
