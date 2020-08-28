@@ -94,7 +94,7 @@ last_mouse_button_clicked = []
 drawn_one_cell_or_span = []
 list_of_bounding_box_coordinates = []
 temporary_list_of_cells_that_have_bounding_boxes = []
-dictionary_of_cell_number_and_bounding_boxes = {}
+temp_dict_cell_number_and_bounding_boxes = {}
 
 # Mouse click for left button
 def click_event(event, x, y, flags, param):
@@ -106,7 +106,7 @@ def click_event(event, x, y, flags, param):
     global drawn_one_cell_or_span
     global list_of_bounding_box_coordinates
     global temporary_list_of_cells_that_have_bounding_boxes
-    global dictionary_of_cell_number_and_bounding_boxes
+    global temp_dict_cell_number_and_bounding_boxes
     if event == cv2.EVENT_LBUTTONDOWN and animal == '' and enable_draw_on_grid == True:
         last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
@@ -237,29 +237,27 @@ def click_event(event, x, y, flags, param):
             image_list.pop()
             last_mouse_button_clicked.pop()
             # Allows for the potential to have multiple boundary boxes in same cell
-            if len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) > 4:
+            if len(temp_dict_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) > 4:
                 # print(len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]))
 
                 # Removing four coordinates if more than one boundary box in cell.
-                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
-                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
-                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
-                del dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
-                print(dictionary_of_cell_number_and_bounding_boxes)
+                for i in range(4):
+                    del temp_dict_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1]
+
+                print(temp_dict_cell_number_and_bounding_boxes)
                 # print(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1])
                 # print(len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]))
 
             # Removes boundary boxes if in a single cell
-            elif len(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) == 4:
-                print(dictionary_of_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]][-1])
-                dictionary_of_cell_number_and_bounding_boxes.pop(temporary_list_of_cells_that_have_bounding_boxes[-1])
-                print(dictionary_of_cell_number_and_bounding_boxes)
+            elif len(temp_dict_cell_number_and_bounding_boxes[temporary_list_of_cells_that_have_bounding_boxes[-1]]) == 4:
+                temp_dict_cell_number_and_bounding_boxes.pop(temporary_list_of_cells_that_have_bounding_boxes[-1])
+                print(temp_dict_cell_number_and_bounding_boxes)
 
 
             temporary_list_of_cells_that_have_bounding_boxes.pop()
             # print(dictionary_of_cell_number_and_bounding_boxes)
     # Allow bounding boxes to be places over images
-    elif event == cv2.EVENT_MBUTTONDOWN:
+    elif event == cv2.EVENT_MBUTTONDOWN and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
 
         def get_bounding_box_start_coordinates(x, y):
             x_start_boundary = x
@@ -275,7 +273,7 @@ def click_event(event, x, y, flags, param):
 
         bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
 
-    elif event == cv2.EVENT_MBUTTONUP:
+    elif event == cv2.EVENT_MBUTTONUP and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
         # Get cell number at end of bounding box
         col_number = x / cell_width
         cell_x = math.trunc(col_number)
@@ -322,12 +320,12 @@ def click_event(event, x, y, flags, param):
 
 
             # Checks if there is already a key from there already being a bounding box in the cell
-            if bounding_box_start_coordinates_x_y[2] in dictionary_of_cell_number_and_bounding_boxes:
-                dictionary_of_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]].extend(list_bounding_box_coordinates)
+            if bounding_box_start_coordinates_x_y[2] in temp_dict_cell_number_and_bounding_boxes:
+                temp_dict_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]].extend(list_bounding_box_coordinates)
 
             else:
-                dictionary_of_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]] = list_bounding_box_coordinates
-                print(dictionary_of_cell_number_and_bounding_boxes)
+                temp_dict_cell_number_and_bounding_boxes[bounding_box_start_coordinates_x_y[2]] = list_bounding_box_coordinates
+                print(temp_dict_cell_number_and_bounding_boxes)
         # Checks if its still within the same cell and if so draws bounding box
         if bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing:
             draw_boundary_box(x, y, bounding_box_start_coordinates_x_y)
