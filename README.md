@@ -1,7 +1,7 @@
 # image-selector-opencv-python
-```
-Speed up image selection, tagging and bounding boxing of images to then use in machine learning models.
 
+Speed up image selection, tagging and bounding boxing of images to then use in machine learning models.
+```
 1. The program reads frames/images from a video resizes the original images down into a grid.
 2. Allows the user to select a span of images, place bounding boxes and tag the images with text. 
 3. A text file containing the frame numbers and tagging is produced on each press of the space bar.
