@@ -3,9 +3,9 @@
 This program is designed to speed up preprocessing of image data; so the user can get to the data science modelling step faster.
 It helps with image selection and putting bounding boxes on images.
 
-The program is designed to read images from a video and resizes the original images down into a grid, allowing 
+The program reads images from a video and resizes the original images down into a grid. Allows 
 the user to select a span of images and tag the images with text. A text file containing the frame numbers and tagging 
-is produced on each press of the space bar; The next lot of images are also fed into the grid on Space bar.
+is produced on each press of the space bar; The next images fed into the grid on Space bar.
 ```
 Keyboard and mouse shortcuts:
 ```
