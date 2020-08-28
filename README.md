@@ -2,7 +2,7 @@
 ```
 This program is designed to speed up preprocessing of image data.
 Allowing the user to get to the data science modelling step faster.
-.
+
 The program reads frames/images from a video resizes the original images down into a grid.
 Allows the user to select a span of images and tag the images with text. 
 A text file containing the frame numbers and tagging is produced on each press of the space bar.
