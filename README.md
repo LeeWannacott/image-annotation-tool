@@ -15,7 +15,7 @@ Right mouse click = Undo image span selection.
 Space bar = Go to next set of images and store tagged images + frame numbers in text file.
 ```
 
-```Example of program in use with images selected and entering a tag for image span```
+```Example of program in use with images selected and entering a tag for image span:```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
 
 ```Text file with list of tags and corresponding frame numbers produced on each Space bar```
