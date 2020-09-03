@@ -83,10 +83,10 @@ frame_numbers_list = []
 list_of_frames_to_keep = []
 image_list = []
 image_list_for_bounding_boxes = []
-animal_list_temporary = []
-animal_list_to_keep = []
-animal_list_to_print = []
-animal = ''
+image_list_temporary = []
+image_list_to_keep = []
+image_list_to_print = []
+image = ''
 enable_draw_on_grid = False
 new_image = ''
 bounding_box_start_coordinates_x_y = ()
@@ -99,7 +99,7 @@ perm_dict_cell_number_and_bounding_boxes = {}
 
 # Mouse click for left button
 def click_event(event, x, y, flags, param):
-    global animal
+    global image
     global last_mouse_button_clicked
     global bounding_box_start_coordinates_x_y
     global new_image
@@ -110,7 +110,7 @@ def click_event(event, x, y, flags, param):
     global temp_dict_cell_number_and_bounding_boxes
     global perm_dict_cell_number_and_bounding_boxes
 
-    if event == cv2.EVENT_LBUTTONDOWN and animal == '' and enable_draw_on_grid == True:
+    if event == cv2.EVENT_LBUTTONDOWN and image == '' and enable_draw_on_grid == True:
         last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
         col_number = x / cell_width
@@ -179,24 +179,25 @@ def click_event(event, x, y, flags, param):
                 cell_numbers_temporary.clear()
 
                 drawn_one_cell_or_span.append('span')
-                global animal
+                global image
                 global window_open
-                if animal == '':
+                if image == '':
                     # Window_open = True
-                    animal = 'window open'
-                    animal = easygui.enterbox("What is tagged in the images?")
-                    if animal != None:
-                        animal.replace(' ','')
+                    image = 'window open'
+                    image = easygui.enterbox("What is tagged in the images?")
+                    # replace
+                    if image is not None:
+                        image = image.replace(" ","")
 
-                if animal != 'window open':
-                    if animal is None:
-                        animal = ''
-                    animal_list_temporary.append(animal)
-                    animal = ''
+                if image != 'window open':
+                    if image is None:
+                        image = ''
+                    image_list_temporary.append(image)
+                    image = ''
 
         draw_rectangles_span()
 
-    elif event == cv2.EVENT_MBUTTONUP and animal == '' and enable_draw_on_grid == True and len(
+    elif event == cv2.EVENT_MBUTTONUP and image == '' and enable_draw_on_grid == True and len(
             last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'left':
 
         # Allows going back to previously drawn images
@@ -230,8 +231,8 @@ def click_event(event, x, y, flags, param):
             cell_numbers_list_for_each_grid.pop()
             cell_numbers_list_for_each_grid.pop()
 
-            if len(animal_list_temporary) > 0:
-                animal_list_temporary.pop()
+            if len(image_list_temporary) > 0:
+                image_list_temporary.pop()
 
     elif event == cv2.EVENT_MBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'right':
         if len(image_list) >= 1 and last_mouse_button_clicked[-1] == 'right':
@@ -407,12 +408,12 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                             cell_numbers_temporary.clear()
                             image_list.clear()
 
-                            # Creates a animal list from the temporary animal lists of each grid of images.
-                            def create_permanent_animal_list():
-                                for animals in animal_list_temporary:
-                                    animal_list_to_keep.append(animals)
+                            # Creates a image list from the temporary image lists of each grid of images.
+                            def create_permanent_image_list():
+                                for images in image_list_temporary:
+                                    image_list_to_keep.append(images)
 
-                            create_permanent_animal_list()
+                            create_permanent_image_list()
 
                             # Transforms cell number in temporary grid into frame and appends to frame numbers list
                             def each_grid_cells_into_frames_list():
@@ -425,27 +426,27 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
 
                             # Calculates frames spans backwards and forwards
-                            def make_list_of_frames_to_keep(animal_count=0):
+                            def make_list_of_frames_to_keep(image_count=0):
                                 # Putting into a list of two's for calculating frame spans
                                 frame_numbers_list_sliced = zip(frame_numbers_list[0::2], frame_numbers_list[1::2])
                                 # Clear lists when space pressed
                                 list_of_frames_to_keep.clear()
-                                animal_list_to_print.clear()
+                                image_list_to_print.clear()
 
                                 for numbers in frame_numbers_list_sliced:
                                     # Forward frame spans
                                     if numbers[0] < numbers[1]:
                                         for frames1 in range(numbers[0], numbers[1] + 1):
                                             list_of_frames_to_keep.append(frames1)
-                                            animal_list_to_print.append(animal_list_to_keep[animal_count])
-                                        animal_count += 1
+                                            image_list_to_print.append(image_list_to_keep[image_count])
+                                        image_count += 1
 
                                     # Backward frame spans
                                     elif numbers[0] > numbers[1]:
                                         for frames2 in range(numbers[1], numbers[0] + 1):
                                             list_of_frames_to_keep.append(frames2)
-                                            animal_list_to_print.append(animal_list_to_keep[animal_count])
-                                        animal_count += 1
+                                            image_list_to_print.append(image_list_to_keep[image_count])
+                                        image_count += 1
 
                             make_list_of_frames_to_keep()
 
@@ -460,18 +461,18 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                             # Clearing temporary lists, so ready for the next lot of images.
                             cell_numbers_list_for_each_grid.clear()
-                            animal_list_temporary.clear()
+                            image_list_temporary.clear()
 
                             def create_text_file():
                                 # Creating text file with frame numbers and what user tags images as.
                                 file = open('List_of_images.txt', 'w')
 
                                 for i, frame in enumerate(list_of_frames_to_keep):
-                                    for key,v in perm_dict_cell_number_and_bounding_boxes.items():
-                                        if frame in perm_dict_cell_number_and_bounding_boxes:
-                                            file.write(f'{frame} {animal_list_to_print[i]} {v} \n')
-                                        else:
-                                            file.write(f'{frame} {animal_list_to_print[i]} \n')
+                                    if frame in perm_dict_cell_number_and_bounding_boxes.keys():
+                                        file.write(f'{frame} {image_list_to_print[i]} {perm_dict_cell_number_and_bounding_boxes[frame]} \n')
+                                    else:
+                                        file.write(f'{frame} {image_list_to_print[i]} \n')
+
                                 file.close()
 
                             # Output text file on each press of Space.
