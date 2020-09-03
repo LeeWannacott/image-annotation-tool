@@ -185,6 +185,8 @@ def click_event(event, x, y, flags, param):
                     # Window_open = True
                     animal = 'window open'
                     animal = easygui.enterbox("What is tagged in the images?")
+                    if animal != None:
+                        animal.replace(' ','')
 
                 if animal != 'window open':
                     if animal is None:
@@ -194,7 +196,7 @@ def click_event(event, x, y, flags, param):
 
         draw_rectangles_span()
 
-    elif event == cv2.EVENT_RBUTTONUP and animal == '' and enable_draw_on_grid == True and len(
+    elif event == cv2.EVENT_MBUTTONUP and animal == '' and enable_draw_on_grid == True and len(
             last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'left':
 
         # Allows going back to previously drawn images
@@ -231,8 +233,8 @@ def click_event(event, x, y, flags, param):
             if len(animal_list_temporary) > 0:
                 animal_list_temporary.pop()
 
-    elif event == cv2.EVENT_RBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'middle':
-        if len(image_list) >= 1 and last_mouse_button_clicked[-1] == 'middle':
+    elif event == cv2.EVENT_MBUTTONUP and enable_draw_on_grid == True and len(last_mouse_button_clicked) > 0 and last_mouse_button_clicked[-1] == 'right':
+        if len(image_list) >= 1 and last_mouse_button_clicked[-1] == 'right':
             param[0] = image_list[-1]
             cv2.imshow('image_selector_from_video', image_list[-1])
             cv2.waitKey(1)
@@ -255,7 +257,7 @@ def click_event(event, x, y, flags, param):
             temporary_list_of_cells_that_have_bounding_boxes.pop()
 
     # Allow bounding boxes to be places over images
-    elif event == cv2.EVENT_MBUTTONDOWN and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
+    elif event == cv2.EVENT_RBUTTONDOWN and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
 
         def get_bounding_box_start_coordinates(x, y):
             x_start_boundary = x
@@ -273,8 +275,7 @@ def click_event(event, x, y, flags, param):
         bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
 
 
-
-    elif event == cv2.EVENT_MBUTTONUP and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
+    elif event == cv2.EVENT_RBUTTONUP and len(drawn_one_cell_or_span) > 0 and drawn_one_cell_or_span[-1] == 'span':
         # Get cell number at end of bounding box
         col_number = x / cell_width
         cell_x = math.trunc(col_number)
@@ -297,7 +298,7 @@ def click_event(event, x, y, flags, param):
             cv2.imshow('image_selector_from_video', param[0])
 
             # Used for un-drawing bounding box logic
-            last_mouse_button_clicked.append('middle')
+            last_mouse_button_clicked.append('right')
 
             # Makes the coordinates relative to within that cell rather than the whole window.
             cell_start_relative_position_x = start_boundary_x_and_y[0] - cell_x_position
@@ -464,9 +465,10 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                             def create_text_file():
                                 # Creating text file with frame numbers and what user tags images as.
                                 file = open('List_of_images.txt', 'w')
+
                                 for i, frame in enumerate(list_of_frames_to_keep):
                                     for key,v in perm_dict_cell_number_and_bounding_boxes.items():
-                                        if key == frame:
+                                        if frame in perm_dict_cell_number_and_bounding_boxes:
                                             file.write(f'{frame} {animal_list_to_print[i]} {v} \n')
                                         else:
                                             file.write(f'{frame} {animal_list_to_print[i]} \n')
