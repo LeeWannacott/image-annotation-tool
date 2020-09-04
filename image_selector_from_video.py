@@ -98,7 +98,6 @@ bounding_box.perm_dict_of_cell_num_and_bbox = {}
 
 class CreateTextFile: pass
 create_text_file = CreateTextFile()
-
 create_text_file.frame_numbers_list = []
 create_text_file.list_of_frames_to_keep = []
 create_text_file.image_list_to_print = []
@@ -138,20 +137,17 @@ def click_event(event, x, y, flags, param):
             # https://stackoverflow.com/questions/8669189/converting-numbers-within-grid-to-their-corresponding-x-y-coordinates
             x2 = cell_number % grid.number_of_columns
             y2 = cell_number // grid.number_of_columns
-
             cell_x_position = x2 * grid.cell_width
             cell_y_position = y2 * grid.cell_height
-
             draw_to_x = cell_x_position + grid.cell_width
             draw_to_y = cell_y_position + grid.cell_height
-            # print(x2,y2,cell_x_position,cell_y_position,draw_to_x,draw_to_y)
+
             cv2.rectangle(param[0], (int(cell_x_position), int(cell_y_position)), (int(draw_to_x), int(draw_to_y)),
                           (0, 150, 0), 2)
             cv2.imshow('image_selector_from_video', param[0])
 
         # draw rectangles between two grid images
         def draw_rectangles_span():
-
             # Draws rectangle in the first cell
             if len(image_selection.cell_numbers_temporary) == 1:
                 draw_rectangles(cell)
@@ -162,6 +158,7 @@ def click_event(event, x, y, flags, param):
                     range(int(image_selection.cell_numbers_temporary[-1]), int(image_selection.cell_numbers_temporary[-2] + 1)))  # backwards
                 between_forwards = list(
                     range(int(image_selection.cell_numbers_temporary[-2]), int(image_selection.cell_numbers_temporary[-1] + 1)))  # forwards
+
                 # Draw rectangles backwards
                 if image_selection.cell_numbers_temporary[-1] < image_selection.cell_numbers_temporary[-2]:
                     for next_cell1 in between_backwards:
@@ -197,8 +194,8 @@ def click_event(event, x, y, flags, param):
     elif event == cv2.EVENT_MBUTTONUP and image_selection.image == '' and mouse_click.enable_draw_on_grid == True and len(
             mouse_click.last_mouse_button_clicked) > 0 and mouse_click.last_mouse_button_clicked[-1] == 'left':
 
-        # Allows going back to previously drawn images
 
+        # Allows undo if one image selected.
         if len(image_selection.image_list) >= 1 and image_selection.drawn_one_cell_or_span[-1] == 'one':
             param[0] = image_selection.image_list[-1]
             cv2.imshow('image_selector_from_video', image_selection.image_list[-1])
@@ -207,9 +204,9 @@ def click_event(event, x, y, flags, param):
             create_text_file.cell_numbers_list_for_each_grid.pop()
             mouse_click.last_mouse_button_clicked.pop()
             image_selection.drawn_one_cell_or_span.pop()
-
             image_selection.cell_numbers_temporary.clear()
 
+        # Allows undo if span of images selected.
         elif len(image_selection.image_list) >= 2 and image_selection.drawn_one_cell_or_span[-1] == 'span':
             param[0] = image_selection.image_list[-2]
             cv2.imshow('image_selector_from_video', image_selection.image_list[-2])
@@ -218,13 +215,10 @@ def click_event(event, x, y, flags, param):
             # Popping lists to undo selection span of images
             image_selection.image_list.pop()
             image_selection.image_list.pop()
-
             mouse_click.last_mouse_button_clicked.pop()
             mouse_click.last_mouse_button_clicked.pop()
-
             image_selection.drawn_one_cell_or_span.pop()
             image_selection.drawn_one_cell_or_span.pop()
-
             create_text_file.cell_numbers_list_for_each_grid.pop()
             create_text_file.cell_numbers_list_for_each_grid.pop()
 
@@ -310,10 +304,11 @@ def click_event(event, x, y, flags, param):
             cell_end_relative_position_x_resized = round(cell_end_relative_position_x / grid.image_resize_x)
             cell_end_relative_position_y_resized = round(cell_end_relative_position_y / grid.image_resize_y)
 
-
+            # Gets bounding box x,y start and x,y end, relative to that individual cell.
             list_bounding_box_coordinates = [cell_start_relative_position_x_resized, cell_start_relative_position_y_resized,
                                                     cell_end_relative_position_x_resized, cell_end_relative_position_y_resized]
 
+            # Cells the user have selected that contain bounding boxes
             bounding_box.temp_list_cells_with_bboxes.append(bounding_box.bounding_box_start_coordinates_x_y[2])
 
 
@@ -346,7 +341,7 @@ cv2.resizeWindow('image_selector_from_video', grid.window_width, grid.window_hei
 def image_grid(index, x_offset=0, y_offset=0, i=0):
     cap.set(1, index)
     recalculate_window_stuff()
-    # Resetting large image to black each time
+    # Resetting large image/grid to black each time.
     l_img = np.zeros((grid.window_height, grid.window_width, 3), np.uint8)
     cv2.imshow('image_selector_from_video', l_img)
     cv2.waitKey(1)
