@@ -11,7 +11,8 @@ Keyboard and mouse shortcuts:
 ```
 Esc = Exit the program.
 Left mouse click = Select span of images.
-Right mouse click = Undo image span selection.
+Right mouse click = Select bounding boxes.
+Middle mouse click = Undo selection.
 Space bar = Go to next set of images and store tagged images + frame numbers in text file.
 ```
 
