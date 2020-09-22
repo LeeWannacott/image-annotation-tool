@@ -322,7 +322,8 @@ def click_event(event, x, y, flags, param):
         # Checks if its still within the same cell and if so draws bounding box
         if bounding_box.bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing and len(create_text_file.cell_numbers_list_for_each_grid) > 0:
             # Check if drawing boundary boxes in span of images that has been selected.
-            if bounding_box.bounding_box_start_coordinates_x_y[2] in range(create_text_file.cell_numbers_list_for_each_grid[-2], create_text_file.cell_numbers_list_for_each_grid[-1]+1):
+            if bounding_box.bounding_box_start_coordinates_x_y[2] in range(create_text_file.cell_numbers_list_for_each_grid[-2], create_text_file.cell_numbers_list_for_each_grid[-1]+1)  \
+            or bounding_box.bounding_box_start_coordinates_x_y[2] in range(create_text_file.cell_numbers_list_for_each_grid[-1], create_text_file.cell_numbers_list_for_each_grid[-2]+1):
                 draw_boundary_box(x, y, bounding_box.bounding_box_start_coordinates_x_y)
 
 
