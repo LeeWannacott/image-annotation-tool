@@ -3,6 +3,7 @@ import numpy as np
 import math
 import easygui
 import sys
+import pyautogui
 
 ''' 
 Speed up image selection, tagging and bounding boxing of relevant images to then use in machine learning models.
@@ -106,6 +107,13 @@ create_text_file.cell_numbers_list_for_each_grid = []
 
 def click_event(event, x, y, flags, param):
     # Mouse click for left button
+    global mouseX
+    global mouseY
+    global global_click_event
+
+    global_click_event = event
+    mouseX = x
+    mouseY = y
     if event == cv2.EVENT_LBUTTONDOWN and image_selection.image == '' and mouse_click.enable_draw_on_grid == True:
         mouse_click.last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
@@ -249,7 +257,7 @@ def click_event(event, x, y, flags, param):
             bounding_box.temp_list_cells_with_bboxes.pop()
 
     # Allow bounding boxes to be places over images
-    elif event == cv2.EVENT_RBUTTONDOWN and len(image_selection.drawn_one_cell_or_span) > 0 and image_selection.drawn_one_cell_or_span[-1] == 'span':
+    elif global_click_event == cv2.EVENT_RBUTTONDOWN and len(image_selection.drawn_one_cell_or_span) > 0 and image_selection.drawn_one_cell_or_span[-1] == 'span':
 
         def get_bounding_box_start_coordinates(x, y):
             x_start_boundary = x
@@ -260,11 +268,18 @@ def click_event(event, x, y, flags, param):
             row_number = y / grid.cell_height
             y1 = math.trunc(row_number)
             cell_number_on_start_of_drawing = int(x1 + (y1 * grid.number_of_columns))
-
-
             return x_start_boundary, y_start_boundary, cell_number_on_start_of_drawing
 
         bounding_box.bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
+
+        # Handle visual drawing of placing bounding box; to give user feedback of where they are placing bbox.
+        global allow_draw
+        allow_draw = True
+        while allow_draw == True:
+            draw_image2 = param[0].copy()
+            cv2.rectangle(draw_image2, (bounding_box.bounding_box_start_coordinates_x_y[0], bounding_box.bounding_box_start_coordinates_x_y[1]),(mouseX, mouseY), (0, 120, 120), 2)
+            cv2.imshow('image_selector_from_video',draw_image2)
+            cv2.waitKey(10)
 
 
     elif event == cv2.EVENT_RBUTTONUP and len(image_selection.drawn_one_cell_or_span) > 0 and image_selection.drawn_one_cell_or_span[-1] == 'span':
@@ -277,6 +292,8 @@ def click_event(event, x, y, flags, param):
         # Minus x,y positions to get cells relative position
         cell_x_position = cell_x * grid.cell_width
         cell_y_position = cell_y * grid.cell_height
+        print('up')
+        allow_draw = False
 
         def draw_boundary_box(x, y, start_boundary_x_and_y):
             # Making copy for un-drawing bounding box
@@ -312,13 +329,15 @@ def click_event(event, x, y, flags, param):
             bounding_box.temp_list_cells_with_bboxes.append(bounding_box.bounding_box_start_coordinates_x_y[2])
 
 
+
+
             # Checks if there is already a key from there already being a bounding box in the cell
             if bounding_box.bounding_box_start_coordinates_x_y[2] in bounding_box.temp_dict_and_cell_number_bboxes:
                 bounding_box.temp_dict_and_cell_number_bboxes[bounding_box.bounding_box_start_coordinates_x_y[2]].extend(list_bounding_box_coordinates)
 
             else:
                 bounding_box.temp_dict_and_cell_number_bboxes[bounding_box.bounding_box_start_coordinates_x_y[2]] = list_bounding_box_coordinates
-        print(bounding_box.bounding_box_start_coordinates_x_y)
+
         # Checks if its still within the same cell and if so draws bounding box
         if bounding_box.bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing and len(create_text_file.cell_numbers_list_for_each_grid) > 0:
             # Check if drawing boundary boxes in span of images that has been selected.
