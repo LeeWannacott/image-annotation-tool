@@ -273,12 +273,12 @@ def click_event(event, x, y, flags, param):
         bounding_box.bounding_box_start_coordinates_x_y = get_bounding_box_start_coordinates(x, y)
 
         # Handle visual drawing of placing bounding box; to give user feedback of where they are placing bbox.
-        global allow_draw
-        allow_draw = True
-        while allow_draw == True:
-            draw_image2 = param[0].copy()
-            cv2.rectangle(draw_image2, (bounding_box.bounding_box_start_coordinates_x_y[0], bounding_box.bounding_box_start_coordinates_x_y[1]),(mouseX, mouseY), (0, 120, 120), 2)
-            cv2.imshow('image_selector_from_video',draw_image2)
+        global allow_draw_bbox
+        allow_draw_bbox = True
+        while allow_draw_bbox == True:
+            draw_bbox_images = param[0].copy()
+            cv2.rectangle(draw_bbox_images, (bounding_box.bounding_box_start_coordinates_x_y[0], bounding_box.bounding_box_start_coordinates_x_y[1]),(mouseX, mouseY), (0, 120, 120), 2)
+            cv2.imshow('image_selector_from_video',draw_bbox_images)
             cv2.waitKey(10)
 
 
@@ -292,8 +292,7 @@ def click_event(event, x, y, flags, param):
         # Minus x,y positions to get cells relative position
         cell_x_position = cell_x * grid.cell_width
         cell_y_position = cell_y * grid.cell_height
-        print('up')
-        allow_draw = False
+        allow_draw_bbox = False
 
         def draw_boundary_box(x, y, start_boundary_x_and_y):
             # Making copy for un-drawing bounding box
