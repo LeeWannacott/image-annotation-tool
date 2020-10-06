@@ -16,12 +16,13 @@ Middle mouse click = Undo selection.
 Space bar = Go to next set of images and store tagged images + frame numbers in text file.
 ```
 
-```Example of program in use with images selected and entering a tag for image span:```
-![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
-
 ``` Example of boundary boxing feature. ```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_boundary_boxing.png)
 
 ```Text file with list of tags and corresponding frame numbers produced on each Space bar.```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/List_of_images.png)
+
+```Example of program in use with images selected and entering a tag for image span:```
+![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
+
 
