@@ -25,5 +25,7 @@ Space bar = Go to next set of images and store tagged images + frame numbers in 
 ```Example of boundary boxing feature:```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_boundary_boxing.png)
 
+```Example of text file for boundary boxing feature:```
+![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/List_of_images_with_boundary_boxes.png)
 
 
