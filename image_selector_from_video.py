@@ -80,14 +80,16 @@ mouse_click.last_mouse_button_clicked = []
 mouse_click.enable_draw_on_grid = False
 mouse_click.coordinates = []
 
+
 class ImageSelection: pass
 image_selection = ImageSelection()
 image_selection.drawn_one_cell_or_span = []
-image_selection.image = ''
+image_selection.tagged_as = ''
 image_selection.new_image = ''
 image_selection.image_list_temporary = []
 image_selection.image_list = []
-image_selection.cell_numbers_temporary = []
+image_selection.cell_numbers_selection_temporary = []
+image_selection.cell_numbers_selection_for_drawing_text = []
 
 class CreateBoundingBox: pass
 bounding_box = CreateBoundingBox()
@@ -114,7 +116,7 @@ def click_event(event, x, y, flags, param):
     global_click_event = event
     mouseX = x
     mouseY = y
-    if event == cv2.EVENT_LBUTTONDOWN and image_selection.image == '' and mouse_click.enable_draw_on_grid == True:
+    if event == cv2.EVENT_LBUTTONDOWN and image_selection.tagged_as == '' and mouse_click.enable_draw_on_grid == True:
         mouse_click.last_mouse_button_clicked.append('left')
         # Gets row and column number on left mouse click
         col_number = x / grid.cell_width
@@ -126,10 +128,10 @@ def click_event(event, x, y, flags, param):
         def coordinate_to_cell(x, y):
             # https://stackoverflow.com/questions/9816024/coordinates-to-grid-box-number
             cell_number = int(x + (y * grid.number_of_columns))
-            # Temporary list for drawing rectangles
 
-            image_selection.cell_numbers_temporary.append(cell_number)
-            # cell numbers list for each grid gets cleared by space
+            # Temporary list for drawing rectangles
+            image_selection.cell_numbers_selection_temporary.append(cell_number)
+            image_selection.cell_numbers_selection_for_drawing_text.append(cell_number)
             create_text_file.cell_numbers_list_for_each_grid.append(cell_number)
             return cell_number
 
@@ -151,55 +153,89 @@ def click_event(event, x, y, flags, param):
             draw_to_y = cell_y_position + grid.cell_height
 
             cv2.rectangle(param[0], (int(cell_x_position), int(cell_y_position)), (int(draw_to_x), int(draw_to_y)),
-                          (0, 150, 0), 2)
+                          (152,251,152), 2)
             cv2.imshow('image_selector_from_video', param[0])
 
         # draw rectangles between two grid images
         def draw_rectangles_span():
             # Draws rectangle in the first cell
-            if len(image_selection.cell_numbers_temporary) == 1:
+            if len(image_selection.cell_numbers_selection_temporary) == 1:
                 draw_rectangles(cell)
                 image_selection.drawn_one_cell_or_span.append('one')
 
-            if len(image_selection.cell_numbers_temporary) >= 2:
+            if len(image_selection.cell_numbers_selection_temporary) >= 2:
                 between_backwards = list(
-                    range(int(image_selection.cell_numbers_temporary[-1]), int(image_selection.cell_numbers_temporary[-2] + 1)))  # backwards
+                    range(int(image_selection.cell_numbers_selection_temporary[-1]), int(image_selection.cell_numbers_selection_temporary[-2] + 1)))  # backwards
                 between_forwards = list(
-                    range(int(image_selection.cell_numbers_temporary[-2]), int(image_selection.cell_numbers_temporary[-1] + 1)))  # forwards
+                    range(int(image_selection.cell_numbers_selection_temporary[-2]), int(image_selection.cell_numbers_selection_temporary[-1] + 1)))  # forwards
 
                 # Draw rectangles backwards
-                if image_selection.cell_numbers_temporary[-1] < image_selection.cell_numbers_temporary[-2]:
+                if image_selection.cell_numbers_selection_temporary[-1] < image_selection.cell_numbers_selection_temporary[-2]:
                     for next_cell1 in between_backwards:
                         draw_rectangles(next_cell1)
 
                 # Draw rectangles forwards
-                if image_selection.cell_numbers_temporary[-1] > image_selection.cell_numbers_temporary[-2]:
+                if image_selection.cell_numbers_selection_temporary[-1] > image_selection.cell_numbers_selection_temporary[-2]:
                     for next_cell2 in between_forwards:
                         draw_rectangles(next_cell2)
 
                 # Clear temporary list so another two squares can be selected
-                image_selection.cell_numbers_temporary.clear()
+                image_selection.cell_numbers_selection_temporary.clear()
 
                 image_selection.drawn_one_cell_or_span.append('span')
 
-
-                if image_selection.image == '':
+                if image_selection.tagged_as == '':
                     # Window_open = True
-                    image_selection.image = 'window open'
-                    image_selection.image = easygui.enterbox("What is tagged in the images?")
+                    image_selection.tagged_as = 'window open'
+                    image_selection.tagged_as = easygui.enterbox("What is tagged in the images?")
                     # replace
-                    if image_selection.image is not None:
-                        image_selection.image = image_selection.image.replace(" ","")
+                    if image_selection.tagged_as is not None:
+                        image_selection.tagged_as = image_selection.tagged_as.replace(" ","")
+                        draw_label_on_selection_span_of_images()
+                        ####
 
-                if image_selection.image != 'window open':
-                    if image_selection.image is None:
-                        image_selection.image = ''
-                    image_selection.image_list_temporary.append(image_selection.image)
-                    image_selection.image = ''
+                if image_selection.tagged_as != 'window open':
+                    if image_selection.tagged_as is None:
+                        image_selection.tagged_as = ''
+                    image_selection.image_list_temporary.append(image_selection.tagged_as)
+
+                    image_selection.tagged_as = ''
+
+        def draw_label(cell_number):
+            # https://stackoverflow.com/questions/8669189/converting-numbers-within-grid-to-their-corresponding-x-y-coordinates
+            x2 = cell_number % grid.number_of_columns
+            y2 = cell_number // grid.number_of_columns
+            cell_x_position = x2 * grid.cell_width
+            cell_y_position = y2 * grid.cell_height
+            cv2.putText(img=param[0], text=image_selection.tagged_as, org=(cell_x_position+5, cell_y_position+20),
+                        fontFace=cv2.FONT_ITALIC, fontScale=0.5, color=(255,105,180),
+                        thickness=1, lineType=cv2.LINE_AA)
+            cv2.imshow('image_selector_from_video', param[0])
+
+        def draw_label_on_selection_span_of_images():
+            if len(image_selection.cell_numbers_selection_for_drawing_text) >= 2:
+                between_backwards = list(
+                    range(int(image_selection.cell_numbers_selection_for_drawing_text[-1]),
+                          int(image_selection.cell_numbers_selection_for_drawing_text[-2] + 1)))  # backwards
+                between_forwards = list(
+                    range(int(image_selection.cell_numbers_selection_for_drawing_text[-2]),
+                          int(image_selection.cell_numbers_selection_for_drawing_text[-1] + 1)))  # forwards
+
+                # Draw rectangles backwards
+                if image_selection.cell_numbers_selection_for_drawing_text[-1] < image_selection.cell_numbers_selection_for_drawing_text[
+                    -2]:
+                    for backward_cell in between_backwards:
+                        draw_label(backward_cell)
+
+                # Draw rectangles forwards
+                if image_selection.cell_numbers_selection_for_drawing_text[-1] > image_selection.cell_numbers_selection_for_drawing_text[
+                    -2]:
+                    for forward_cell in between_forwards:
+                        draw_label(forward_cell)
 
         draw_rectangles_span()
 
-    elif event == cv2.EVENT_MBUTTONUP and image_selection.image == '' and mouse_click.enable_draw_on_grid == True and len(
+    elif event == cv2.EVENT_MBUTTONUP and image_selection.tagged_as == '' and mouse_click.enable_draw_on_grid == True and len(
             mouse_click.last_mouse_button_clicked) > 0 and mouse_click.last_mouse_button_clicked[-1] == 'left':
 
 
@@ -212,7 +248,7 @@ def click_event(event, x, y, flags, param):
             create_text_file.cell_numbers_list_for_each_grid.pop()
             mouse_click.last_mouse_button_clicked.pop()
             image_selection.drawn_one_cell_or_span.pop()
-            image_selection.cell_numbers_temporary.clear()
+            image_selection.cell_numbers_selection_temporary.clear()
 
         # Allows undo if span of images selected.
         elif len(image_selection.image_list) >= 2 and image_selection.drawn_one_cell_or_span[-1] == 'span':
@@ -277,7 +313,7 @@ def click_event(event, x, y, flags, param):
         allow_draw_bbox = True
         while allow_draw_bbox == True:
             draw_bbox_images = param[0].copy()
-            cv2.rectangle(draw_bbox_images, (bounding_box.bounding_box_start_coordinates_x_y[0], bounding_box.bounding_box_start_coordinates_x_y[1]),(mouseX, mouseY), (0, 120, 120), 2)
+            cv2.rectangle(draw_bbox_images, (bounding_box.bounding_box_start_coordinates_x_y[0], bounding_box.bounding_box_start_coordinates_x_y[1]),(mouseX, mouseY), (32,178,170), 2)
             cv2.imshow('image_selector_from_video',draw_bbox_images)
             cv2.waitKey(10)
 
@@ -302,7 +338,7 @@ def click_event(event, x, y, flags, param):
             # Draws bounding box
             end_boundary_x_and_y = (x, y)
             cv2.rectangle(param[0], (start_boundary_x_and_y[0], start_boundary_x_and_y[1]),
-                          (end_boundary_x_and_y[0], end_boundary_x_and_y[1]), (0, 150, 150), 2)
+                          (end_boundary_x_and_y[0], end_boundary_x_and_y[1]), (0,255,127), 2)
             cv2.imshow('image_selector_from_video', param[0])
 
             # Used for un-drawing bounding box logic
@@ -406,17 +442,17 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                             print('Spacebar pressed')
 
                             # Getting rid of an uneven number of cells in lists
-                            if len(image_selection.cell_numbers_temporary) % 2 == 0:
+                            if len(image_selection.cell_numbers_selection_temporary) % 2 == 0:
                                 pass
                             else:
-                                image_selection.cell_numbers_temporary.pop()
+                                image_selection.cell_numbers_selection_temporary.pop()
                             if len(create_text_file.cell_numbers_list_for_each_grid) % 2 == 0:
                                 pass
                             else:
                                 create_text_file.cell_numbers_list_for_each_grid.pop()
 
                             # Clears lists for the case of single selected rectangle
-                            image_selection.cell_numbers_temporary.clear()
+                            image_selection.cell_numbers_selection_temporary.clear()
                             image_selection.image_list.clear()
 
                             # Creates a image list from the temporary image lists of each grid of images.
