@@ -13,7 +13,7 @@ Esc = Exit the program.
 Left mouse click = Select span of images.
 Right mouse click = Select bounding boxes.
 Middle mouse click = Undo selection.
-Space bar = Go to next set of images and store tagged images + frame numbers amnd boundary box coordinates in text file.
+Space bar = Go to next set of images and store tagged images + frame numbers in text file.
 ```
 
 ```Example of program in use with image span selected and tagged:```
