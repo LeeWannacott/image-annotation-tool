@@ -16,10 +16,10 @@ Middle mouse click = Undo selection.
 Space bar = Go to next set of images and store tagged images + frame numbers amnd boundary box coordinates in text file.
 ```
 
-```Example of program in use with images selected and entering a tag for image span:```
+```Example of program in use with image span selected and tagged:```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
 
-```Text file with list of tagged images including frame numbers and boundary box coordinates:```
+```Text file with list of tagged images includes frame numbers and boundary box coordinates:```
 ![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/List_of_tagged_images.png)
 
 
