@@ -61,7 +61,7 @@ grid.image_resize_y = 0
 
 # Calulating how many images useful for last grid of images. 
 frames_in_image_list = int(len(files))
-print('Frames in video: ' + str(frames_in_image_list))
+print('Amount of images: ' + str(frames_in_image_list))
 
 def recalculate_window_stuff():
     (_, _, temp_window_width, temp_window_height) = cv2.getWindowImageRect('image_selector_from_video')
@@ -117,7 +117,6 @@ create_text_file.list_of_frames_to_keep = []
 create_text_file.image_list_to_print = []
 create_text_file.image_list_to_keep = []
 create_text_file.cell_numbers_list_for_each_grid = []
-
 def click_event(event, x, y, flags, param):
     # Mouse click for left button
     global mouseX
@@ -164,7 +163,7 @@ def click_event(event, x, y, flags, param):
             draw_to_y = cell_y_position + grid.cell_height
 
             cv2.rectangle(param[0], (int(cell_x_position), int(cell_y_position)), (int(draw_to_x), int(draw_to_y)),
-                    (152,251,152), 2)
+                          (152,251,152), 2)
             cv2.imshow('image_selector_from_video', param[0])
 
         # draw rectangles between two grid images
@@ -176,9 +175,9 @@ def click_event(event, x, y, flags, param):
 
             if len(image_selection.cell_numbers_selection_temporary) >= 2:
                 between_backwards = list(
-                        range(int(image_selection.cell_numbers_selection_temporary[-1]), int(image_selection.cell_numbers_selection_temporary[-2] + 1)))  # backwards
+                    range(int(image_selection.cell_numbers_selection_temporary[-1]), int(image_selection.cell_numbers_selection_temporary[-2] + 1)))  # backwards
                 between_forwards = list(
-                        range(int(image_selection.cell_numbers_selection_temporary[-2]), int(image_selection.cell_numbers_selection_temporary[-1] + 1)))  # forwards
+                    range(int(image_selection.cell_numbers_selection_temporary[-2]), int(image_selection.cell_numbers_selection_temporary[-1] + 1)))  # forwards
 
                 # Draw rectangles backwards
                 if image_selection.cell_numbers_selection_temporary[-1] < image_selection.cell_numbers_selection_temporary[-2]:
@@ -203,6 +202,7 @@ def click_event(event, x, y, flags, param):
                     if image_selection.tagged_as is not None:
                         image_selection.tagged_as = image_selection.tagged_as.replace(" ","")
                         draw_label_on_selection_span_of_images()
+                        ####
 
                 if image_selection.tagged_as != 'window open':
                     if image_selection.tagged_as is None:
@@ -218,28 +218,28 @@ def click_event(event, x, y, flags, param):
             cell_x_position = x2 * grid.cell_width
             cell_y_position = y2 * grid.cell_height
             cv2.putText(img=param[0], text=image_selection.tagged_as, org=(cell_x_position+5, cell_y_position+20),
-                    fontFace=cv2.FONT_ITALIC, fontScale=0.5, color=(255,105,180),
-                    thickness=1, lineType=cv2.LINE_AA)
+                        fontFace=cv2.FONT_ITALIC, fontScale=0.5, color=(255,105,180),
+                        thickness=1, lineType=cv2.LINE_AA)
             cv2.imshow('image_selector_from_video', param[0])
 
         def draw_label_on_selection_span_of_images():
             if len(image_selection.cell_numbers_selection_for_drawing_text) >= 2:
                 between_backwards = list(
-                        range(int(image_selection.cell_numbers_selection_for_drawing_text[-1]),
-                            int(image_selection.cell_numbers_selection_for_drawing_text[-2] + 1)))  # backwards
+                    range(int(image_selection.cell_numbers_selection_for_drawing_text[-1]),
+                          int(image_selection.cell_numbers_selection_for_drawing_text[-2] + 1)))  # backwards
                 between_forwards = list(
-                                range(int(image_selection.cell_numbers_selection_for_drawing_text[-2]),
-                                    int(image_selection.cell_numbers_selection_for_drawing_text[-1] + 1)))  # forwards
+                    range(int(image_selection.cell_numbers_selection_for_drawing_text[-2]),
+                          int(image_selection.cell_numbers_selection_for_drawing_text[-1] + 1)))  # forwards
 
-                                # Draw rectangles backwards
+                # Draw rectangles backwards
                 if image_selection.cell_numbers_selection_for_drawing_text[-1] < image_selection.cell_numbers_selection_for_drawing_text[
-                        -2]:
+                    -2]:
                     for backward_cell in between_backwards:
                         draw_label(backward_cell)
 
                 # Draw rectangles forwards
                 if image_selection.cell_numbers_selection_for_drawing_text[-1] > image_selection.cell_numbers_selection_for_drawing_text[
-                        -2]:
+                    -2]:
                     for forward_cell in between_forwards:
                         draw_label(forward_cell)
 
@@ -261,7 +261,7 @@ def click_event(event, x, y, flags, param):
             image_selection.cell_numbers_selection_temporary.clear()
 
         # Allows undo if span of images selected.
-    elif len(image_selection.image_list) >= 2 and image_selection.drawn_one_cell_or_span[-1] == 'span':
+        elif len(image_selection.image_list) >= 2 and image_selection.drawn_one_cell_or_span[-1] == 'span':
             param[0] = image_selection.image_list[-2]
             cv2.imshow('image_selector_from_video', image_selection.image_list[-2])
             cv2.waitKey(1)
@@ -295,8 +295,8 @@ def click_event(event, x, y, flags, param):
                     del bounding_box.temp_dict_and_cell_number_bboxes[bounding_box.temp_list_cells_with_bboxes[-1]][-1]
 
             # Removes boundary boxes if in a single cell
-        elif len(bounding_box.temp_dict_and_cell_number_bboxes[bounding_box.temp_list_cells_with_bboxes[-1]]) == 4:
-            bounding_box.temp_dict_and_cell_number_bboxes.pop(bounding_box.temp_list_cells_with_bboxes[-1])
+            elif len(bounding_box.temp_dict_and_cell_number_bboxes[bounding_box.temp_list_cells_with_bboxes[-1]]) == 4:
+                bounding_box.temp_dict_and_cell_number_bboxes.pop(bounding_box.temp_list_cells_with_bboxes[-1])
 
 
             # Removes cell number from temporary list
@@ -348,7 +348,7 @@ def click_event(event, x, y, flags, param):
             # Draws bounding box
             end_boundary_x_and_y = (x, y)
             cv2.rectangle(param[0], (start_boundary_x_and_y[0], start_boundary_x_and_y[1]),
-                    (end_boundary_x_and_y[0], end_boundary_x_and_y[1]), (0,255,127), 2)
+                          (end_boundary_x_and_y[0], end_boundary_x_and_y[1]), (0,255,127), 2)
             cv2.imshow('image_selector_from_video', param[0])
 
             # Used for un-drawing bounding box logic
@@ -368,10 +368,12 @@ def click_event(event, x, y, flags, param):
 
             # Gets bounding box x,y start and x,y end, relative to that individual cell.
             list_bounding_box_coordinates = [cell_start_relative_position_x_resized, cell_start_relative_position_y_resized,
-                    cell_end_relative_position_x_resized, cell_end_relative_position_y_resized]
+                                                    cell_end_relative_position_x_resized, cell_end_relative_position_y_resized]
 
             # Cells the user have selected that contain bounding boxes
             bounding_box.temp_list_cells_with_bboxes.append(bounding_box.bounding_box_start_coordinates_x_y[2])
+
+
 
 
             # Checks if there is already a key from there already being a bounding box in the cell
@@ -385,8 +387,9 @@ def click_event(event, x, y, flags, param):
         if bounding_box.bounding_box_start_coordinates_x_y[2] == cell_number_on_end_of_drawing and len(create_text_file.cell_numbers_list_for_each_grid) > 0:
             # Check if drawing boundary boxes in span of images that has been selected.
             if bounding_box.bounding_box_start_coordinates_x_y[2] in range(create_text_file.cell_numbers_list_for_each_grid[-2], create_text_file.cell_numbers_list_for_each_grid[-1]+1)  \
-                    or bounding_box.bounding_box_start_coordinates_x_y[2] in range(create_text_file.cell_numbers_list_for_each_grid[-1], create_text_file.cell_numbers_list_for_each_grid[-2]+1):
-                        draw_boundary_box(x, y, bounding_box.bounding_box_start_coordinates_x_y)
+            or bounding_box.bounding_box_start_coordinates_x_y[2] in range(create_text_file.cell_numbers_list_for_each_grid[-1], create_text_file.cell_numbers_list_for_each_grid[-2]+1):
+                draw_boundary_box(x, y, bounding_box.bounding_box_start_coordinates_x_y)
+
 
 index = 0
 
@@ -406,9 +409,8 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
         mouse_click.enable_draw_on_grid = False
         for i, s_image in enumerate(files[index:]):
-             
-            s_image = cv2.imread(s_image)
 
+            s_image = cv2.imread(s_image)
             #  Resize image
             s_image = cv2.resize(s_image, (0, 0), None, grid.image_resize_x, grid.image_resize_y)
 
@@ -469,12 +471,11 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                         each_grid_cells_into_frames_list()
 
-
-
                         # Calculates frames spans backwards and forwards
                         def make_list_of_frames_to_keep(image_count=0):
                             # Putting into a list of two's for calculating frame spans
-                            frame_numbers_list_sliced = zip(create_text_file.frame_numbers_list[0::2], create_text_file.frame_numbers_list[1::2])
+                            frame_numbers_list_sliced = zip(create_text_file.frame_numbers_list[0::2],
+                                                            create_text_file.frame_numbers_list[1::2])
                             # Clear lists when space pressed
                             create_text_file.list_of_frames_to_keep.clear()
                             create_text_file.image_list_to_print.clear()
@@ -484,22 +485,26 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                                 if numbers[0] < numbers[1]:
                                     for frames1 in range(numbers[0], numbers[1] + 1):
                                         create_text_file.list_of_frames_to_keep.append(frames1)
-                                        create_text_file.image_list_to_print.append(create_text_file.image_list_to_keep[image_count])
+                                        create_text_file.image_list_to_print.append(
+                                            create_text_file.image_list_to_keep[image_count])
                                     image_count += 1
 
                                 # Backward frame spans
                                 elif numbers[0] > numbers[1]:
-                                        for frames2 in range(numbers[1], numbers[0] + 1):
-                                            create_text_file.list_of_frames_to_keep.append(frames2)
-                                            create_text_file.image_list_to_print.append(create_text_file.image_list_to_keep[image_count])
-                                        image_count += 1
+                                    for frames2 in range(numbers[1], numbers[0] + 1):
+                                        create_text_file.list_of_frames_to_keep.append(frames2)
+                                        create_text_file.image_list_to_print.append(
+                                            create_text_file.image_list_to_keep[image_count])
+                                    image_count += 1
 
                         make_list_of_frames_to_keep()
 
                         def bounding_box_cell_keys_to_frames():
                             # Changing the key of dict: cell numbers into frame numbers.
-                            temp_dict_to_append = {k + int(param[1]): v for (k, v) in bounding_box.temp_dict_and_cell_number_bboxes.items()}
+                            temp_dict_to_append = {k + int(param[1]): v for (k, v) in
+                                                   bounding_box.temp_dict_and_cell_number_bboxes.items()}
                             bounding_box.perm_dict_of_cell_num_and_bbox.update(temp_dict_to_append)
+
                         bounding_box_cell_keys_to_frames()
 
                         # Clear temp dict of bounding boxes ready for next lot of frames to have bounding boxes.
@@ -515,7 +520,8 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
 
                             for i, frame in enumerate(create_text_file.list_of_frames_to_keep):
                                 if frame in bounding_box.perm_dict_of_cell_num_and_bbox.keys():
-                                    file.write(f'{frame} {create_text_file.image_list_to_print[i]} {bounding_box.perm_dict_of_cell_num_and_bbox[frame]} \n')
+                                    file.write(
+                                        f'{frame} {create_text_file.image_list_to_print[i]} {bounding_box.perm_dict_of_cell_num_and_bbox[frame]} \n')
                                 else:
                                     file.write(f'{frame} {create_text_file.image_list_to_print[i]} \n')
 
@@ -529,10 +535,10 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                             return image_grid(index)
 
                         # If Space bar pressed and end of the video exit out of loop and save tagging.
-                    elif (frames_in_image_list == index and index >
-                    grid.number_of_cells):
-                        creates_text_file()
-                        return
+                        elif (frames_in_image_list == index and index >
+                              grid.number_of_cells):
+                            creates_text_file()
+                            return
 
 
 # Calls function with index of 0.
@@ -543,3 +549,4 @@ cv2.destroyAllWindows()
 
 # Shuts program down.
 sys.exit()
+
