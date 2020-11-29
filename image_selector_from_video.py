@@ -1,3 +1,7 @@
+```
+Author: Lee Wannacott
+Github: https://github.com/LeeWannacott/
+```
 import cv2
 import numpy as np
 import math
@@ -530,7 +534,8 @@ def image_grid(index, x_offset=0, y_offset=0, i=0):
                                 return image_grid(index)
 
                             # If Space bar pressed and end of the video exit out of loop and save tagging.
-                            elif frames_in_video == index:
+                            elif (frames_in_video == index and index >
+                            grid.number_of_cells):
                                 creates_text_file()
                                 return
 
