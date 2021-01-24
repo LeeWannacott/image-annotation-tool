@@ -1,4 +1,4 @@
-# imagotation
+# imagonation
 
 image + tagging + annotation == imagotaggation - tagging -> imagotation + imagination == ? imagonation  : image-selector-opencv-python
 
