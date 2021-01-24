@@ -1,5 +1,7 @@
 # image-selector-opencv-python
 
+image + annotation + imagination === imagotation.
+
 Speed up image selection, tagging and bounding boxing of relevant images to then use in machine learning models.
 ```
 1. The program reads frames/images from a video resizes the original images down into a grid.
