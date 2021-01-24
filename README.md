@@ -1,4 +1,4 @@
-# image-selector-opencv-python
+# imagotation
 
 image + annotation == imagotation.
 
