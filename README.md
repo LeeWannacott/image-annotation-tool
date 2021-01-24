@@ -1,6 +1,6 @@
 # imagotation
 
-image + tagging + annotation == imagotation.
+image + tagging + annotation == imagotaggation - tagging -> imagotation + imagination == ? imagonation  : image-selector-opencv-python
 
 Speed up image selection, tagging and bounding boxing of relevant images to then use in machine learning models.
 ```
