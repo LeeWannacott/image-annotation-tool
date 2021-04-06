@@ -26,7 +26,7 @@ Spacebar = Go to next set of images and store tagged images + frame numbers in t
 ```Example of having placed bounding boxes:```
 ![bbox](https://user-images.githubusercontent.com/49783296/113673683-692f2b00-970d-11eb-89d7-c4d25622d779.png)
 
-```Text file produced on spacebar containing: image/frame number, tagging and bounding box coordinates. ```
+```Text file produced on spacebar containing: image/frame number, tagging and bounding box coordinates: ```
 ![List_of_tagged_images](https://user-images.githubusercontent.com/49783296/113673801-87952680-970d-11eb-8a6b-28f38e0d617b.png)
 
 
