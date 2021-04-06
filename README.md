@@ -11,8 +11,8 @@ Keyboard and mouse shortcuts:
 ```
 Esc = Exit the program.
 Left mouse click = Select span of images.
-Right mouse drag = Select rectangle bounding boxes.
-Middle mouse click = Undo selection.
+Right mouse drag = Create rectangle bounding boxes.
+Middle mouse click = Undo selection, or bounding box placement.
 Spacebar = Go to next set of images and store tagged images + frame numbers in text file.
 ```
 
