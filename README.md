@@ -11,15 +11,26 @@ Keyboard and mouse shortcuts:
 ```
 Esc = Exit the program.
 Left mouse click = Select span of images.
-Right mouse click = Select bounding boxes.
+Right mouse drag = Select rectangle bounding boxes.
 Middle mouse click = Undo selection.
-Space bar = Go to next set of images and store tagged images + frame numbers in text file.
+Spacebar = Go to next set of images and store tagged images + frame numbers in text file.
 ```
 
-```Example of program in use with image span selected and tagged:```
-![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/Example_of_use.png)
+```Example of loading images on spacebar:```
 
-```Text file containing list of tagged images with frame numbers and boundary box coordinates:```
-![Screenshot](https://github.com/LeeWannacott/image-selector-opencv-python/blob/master/List_of_tagged_images.png)
+![load_images](https://user-images.githubusercontent.com/49783296/113673561-43098b00-970d-11eb-865b-dc85971a7f9f.gif)
+
+
+```Example of selecting relevant span of images:```
+
+![Annotate_images](https://user-images.githubusercontent.com/49783296/113673605-5157a700-970d-11eb-8fc4-1c5bc5b92fe2.gif)
+
+```Example of having placed bounding boxes:```
+![bbox](https://user-images.githubusercontent.com/49783296/113673683-692f2b00-970d-11eb-89d7-c4d25622d779.png)
+
+```Text file produced on spacebar containing: image/frame number, tagging and bounding box coordinates. ```
+![List_of_tagged_images](https://user-images.githubusercontent.com/49783296/113673801-87952680-970d-11eb-8a6b-28f38e0d617b.png)
+
+
 
 
