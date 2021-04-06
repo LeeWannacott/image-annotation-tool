@@ -17,12 +17,10 @@ Spacebar = Go to next set of images and store tagged images + frame numbers in t
 ```
 
 ```Example of loading images on spacebar:```
-
 ![load_images](https://user-images.githubusercontent.com/49783296/113673561-43098b00-970d-11eb-865b-dc85971a7f9f.gif)
 
 
 ```Example of selecting relevant span of images:```
-
 ![Annotate_images](https://user-images.githubusercontent.com/49783296/113673605-5157a700-970d-11eb-8fc4-1c5bc5b92fe2.gif)
 
 ```Example of having placed bounding boxes:```
